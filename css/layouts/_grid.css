@@ -1,0 +1,235 @@
+/* App Layout Structure */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+}
+.main-content {
+  flex: 1;
+  padding: var(--space-md);
+  padding-top: calc(var(--space-md) + 80px); /* Add padding for sticky header */
+  position: relative;
+  z-index: 1;
+}
+
+/* Daily Communicator Grid */
+.comms-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr 320px;
+  gap: var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 280px); /* Reduced height to account for sticky header */
+}
+
+
+/* Content Amplifier Grid */
+.amplifier-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr 320px;
+  gap: var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 280px);
+}
+
+/* Smart Predictor Grid */
+.predictor-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr 320px;
+  gap: var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 280px);
+}
+/* Symbol Board Grid */
+.symbol-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  gap: var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 280px);
+}
+
+
+/* Voice Personalizer Grid */
+.voice-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr 320px;
+  gap: var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 280px);
+}
+
+/* Emergency Mode Grid */
+.emergency-content {
+  display: grid;
+  grid-template-columns: 300px 1fr 320px;
+  gap: var(--space-lg);
+  min-height: calc(100vh - 280px);
+}
+
+/* Page Container Styles */
+.daily-communicator-page,
+.content-amplifier-page,
+.smart-predictor-page,
+.symbol-board-page,
+.voice-personalizer-page,
+.emergency-mode-page {
+  min-height: calc(100vh - 200px);
+  padding-bottom: var(--space-xl);
+  position: relative;
+}
+
+/* Sidebar Layouts */
+.sidebar-left, 
+.sidebar-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  position: relative;
+  z-index: 2;
+}
+
+/* Main Content Areas */
+.main-comms-area,
+.main-amplifier-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 1200px) {
+  .comms-grid,
+  .amplifier-grid,
+  .predictor-grid,
+  .symbol-grid,
+  .voice-grid {
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 180px);
+  }
+  
+  .emergency-content {
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 180px);
+  }
+  
+  /* Hide right sidebar on medium screens */
+  .comms-grid .sidebar-right,
+  .amplifier-grid .sidebar-right,
+  .predictor-grid .sidebar-right,
+  .symbol-grid .sidebar-right,
+  .voice-grid .sidebar-right,
+  .emergency-content .sidebar-right {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .comms-grid,
+  .amplifier-grid,
+  .predictor-grid,
+  .symbol-grid,
+  .voice-grid,
+  .emergency-content {
+    grid-template-columns: 1fr;
+    min-height: calc(100vh - 160px);
+    gap: var(--space-md);
+  }
+  
+  /* Hide left sidebar on mobile */
+  .comms-grid .sidebar-left,
+  .amplifier-grid .sidebar-left,
+  .predictor-grid .sidebar-left,
+  .symbol-grid .sidebar-left,
+  .voice-grid .sidebar-left,
+  .emergency-content .sidebar-left {
+    display: none;
+  }
+  
+  .main-content {
+    padding: var(--space-sm);
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .comms-grid,
+  .amplifier-grid,
+  .predictor-grid,
+  .symbol-grid,
+  .voice-grid,
+  .emergency-content {
+    min-height: calc(100vh - 140px);
+    gap: var(--space-sm);
+  }
+  
+  .daily-communicator-page,
+  .content-amplifier-page,
+  .smart-predictor-page,
+  .symbol-board-page,
+  .voice-personalizer-page,
+  .emergency-mode-page {
+    min-height: calc(100vh - 140px);
+    padding-bottom: var(--space-lg);
+  }
+}
+
+/* Overflow handling for grid content */
+.comms-grid,
+.amplifier-grid,
+.predictor-grid,
+.symbol-grid,
+.voice-grid,
+.emergency-content {
+  overflow: visible;
+}
+
+.sidebar-left,
+.sidebar-right {
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
+}
+
+/* Ensure proper stacking context */
+.app-layout {
+  position: relative;
+  z-index: 0;
+}
+
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Footer spacing adjustment */
+.footer {
+  margin-top: auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* Print styles */
+@media print {
+  .comms-grid,
+  .amplifier-grid,
+  .predictor-grid,
+  .symbol-grid,
+  .voice-grid,
+  .emergency-content {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    height: auto;
+  }
+  
+  .sidebar-left,
+  .sidebar-right {
+    display: none;
+  }
+}
