@@ -103,6 +103,17 @@ const Header = ({ activeSolution, setActiveSolution, systemStatus, currentLangua
     return () => clearInterval(interval);
   }, [isTTSPlaying]);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowUserMenu(false);
+      setShowNavMenu(false);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   const triggerEmergency = () => {
     setEmergencyMode(true);
     setTimeout(() => setEmergencyMode(false), 10000);
@@ -158,6 +169,11 @@ const Header = ({ activeSolution, setActiveSolution, systemStatus, currentLangua
     );
   };
 
+  // Prevent dropdown close when clicking inside
+  const handleDropdownClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <header className={`professional-header ${emergencyMode ? 'emergency-active' : ''}`}>
       
@@ -192,14 +208,17 @@ const Header = ({ activeSolution, setActiveSolution, systemStatus, currentLangua
           <div className="nav-dropdown">
             <button 
               className={`nav-item dropdown-toggle ${showNavMenu ? 'active' : ''}`}
-              onClick={() => setShowNavMenu(!showNavMenu)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowNavMenu(!showNavMenu);
+              }}
             >
               <ChevronDown size={20} />
               <span className="nav-text">More</span>
             </button>
             
             {showNavMenu && (
-              <div className="dropdown-menu">
+              <div className="dropdown-menu" onClick={handleDropdownClick}>
                 {additionalSolutions.map((solution) => (
                   <button
                     key={solution.id}
@@ -256,7 +275,10 @@ const Header = ({ activeSolution, setActiveSolution, systemStatus, currentLangua
           <div className="user-profile">
             <button 
               className="profile-button"
-              onClick={() => setShowUserMenu(!showUserMenu)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowUserMenu(!showUserMenu);
+              }}
             >
               <div className="avatar">
                 <User size={18} />
@@ -265,7 +287,7 @@ const Header = ({ activeSolution, setActiveSolution, systemStatus, currentLangua
             </button>
 
             {showUserMenu && (
-              <div className="profile-menu">
+              <div className="profile-menu" onClick={handleDropdownClick}>
                 <div className="menu-section">
                   <button className="menu-item">
                     <User size={16} />
@@ -284,7 +306,7 @@ const Header = ({ activeSolution, setActiveSolution, systemStatus, currentLangua
                     <span>Battery: {systemStatus?.battery || 85}%</span>
                   </button>
                 </div>
-                <div className="menu-footer">
+                <div className="menu-section">
                   <button className="menu-item sign-out">
                     <span>Sign Out</span>
                   </button>

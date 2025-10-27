@@ -1,3 +1,5 @@
+/* === Main Layout Structure with Fixed Header Support === */
+
 /* App Layout Structure */
 .app-layout {
   min-height: 100vh;
@@ -5,12 +7,40 @@
   flex-direction: column;
   background: var(--bg-primary);
 }
+
+/* CRITICAL: Main content wrapper for fixed header */
+.main-content-wrapper {
+  margin-top: var(--header-height);
+  flex: 1;
+  position: relative;
+  z-index: var(--z-header) - 1;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  background: var(--bg-primary);
+}
+
 .main-content {
   flex: 1;
-  padding: var(--space-md);
-  padding-top: calc(var(--space-md) + 80px); /* Add padding for sticky header */
+  padding: var(--content-padding);
   position: relative;
   z-index: 1;
+  /* REMOVED: padding-top: calc(var(--space-md) + 80px); - No longer needed with fixed header */
+}
+
+/* Body padding to prevent content hiding behind fixed header */
+body {
+  padding-top: var(--header-height);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Particle background positioning */
+.particle-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-particle);
 }
 
 /* Daily Communicator Grid */
@@ -20,9 +50,8 @@
   gap: var(--space-lg);
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 280px); /* Reduced height to account for sticky header */
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
 }
-
 
 /* Content Amplifier Grid */
 .amplifier-grid {
@@ -31,7 +60,7 @@
   gap: var(--space-lg);
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 280px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
 }
 
 /* Smart Predictor Grid */
@@ -41,8 +70,9 @@
   gap: var(--space-lg);
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 280px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
 }
+
 /* Symbol Board Grid */
 .symbol-grid {
   display: grid;
@@ -50,9 +80,8 @@
   gap: var(--space-lg);
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 280px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
 }
-
 
 /* Voice Personalizer Grid */
 .voice-grid {
@@ -61,7 +90,7 @@
   gap: var(--space-lg);
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 280px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
 }
 
 /* Emergency Mode Grid */
@@ -69,7 +98,7 @@
   display: grid;
   grid-template-columns: 300px 1fr 320px;
   gap: var(--space-lg);
-  min-height: calc(100vh - 280px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
 }
 
 /* Page Container Styles */
@@ -79,7 +108,7 @@
 .symbol-board-page,
 .voice-personalizer-page,
 .emergency-mode-page {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
   padding-bottom: var(--space-xl);
   position: relative;
 }
@@ -112,12 +141,12 @@
   .symbol-grid,
   .voice-grid {
     grid-template-columns: 280px 1fr;
-    min-height: calc(100vh - 180px);
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - 30px);
   }
   
   .emergency-content {
     grid-template-columns: 280px 1fr;
-    min-height: calc(100vh - 180px);
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - 30px);
   }
   
   /* Hide right sidebar on medium screens */
@@ -139,7 +168,7 @@
   .voice-grid,
   .emergency-content {
     grid-template-columns: 1fr;
-    min-height: calc(100vh - 160px);
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px);
     gap: var(--space-md);
   }
   
@@ -155,7 +184,10 @@
   
   .main-content {
     padding: var(--space-sm);
-    padding-bottom: 0;
+  }
+  
+  .main-content-wrapper {
+    margin-top: var(--header-height);
   }
 }
 
@@ -166,7 +198,7 @@
   .symbol-grid,
   .voice-grid,
   .emergency-content {
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - 10px);
     gap: var(--space-sm);
   }
   
@@ -176,7 +208,7 @@
   .symbol-board-page,
   .voice-personalizer-page,
   .emergency-mode-page {
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - 10px);
     padding-bottom: var(--space-lg);
   }
 }
@@ -194,7 +226,7 @@
 .sidebar-left,
 .sidebar-right {
   overflow-y: auto;
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - var(--header-height) - 100px);
 }
 
 /* Ensure proper stacking context */
@@ -203,7 +235,7 @@
   z-index: 0;
 }
 
-.main-content {
+.main-content-wrapper {
   position: relative;
   z-index: 1;
 }
@@ -213,6 +245,7 @@
   margin-top: auto;
   position: relative;
   z-index: 10;
+  background: var(--bg-secondary);
 }
 
 /* Print styles */
@@ -231,5 +264,14 @@
   .sidebar-left,
   .sidebar-right {
     display: none;
+  }
+  
+  /* Remove fixed header spacing for print */
+  body {
+    padding-top: 0;
+  }
+  
+  .main-content-wrapper {
+    margin-top: 0;
   }
 }

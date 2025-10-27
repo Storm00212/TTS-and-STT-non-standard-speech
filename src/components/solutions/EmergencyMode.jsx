@@ -10,9 +10,9 @@ import {
   Lock, Unlock, Copy, CheckCircle, XCircle, TrendingUp,
   Pause, SkipForward, SkipBack, Waves, Gauge, Activity,
   Monitor, FileText, Bell, Navigation, Crosshair,
-  Ambulance, Stethoscope, AlertCircle, Siren, Siren as Police
+  Ambulance, Stethoscope, AlertCircle, Siren, Siren as Police,
+  Zap 
 } from 'lucide-react';
-
 const EmergencyMode = () => {
   // State management
   const [emergencyActive, setEmergencyActive] = useState(false);

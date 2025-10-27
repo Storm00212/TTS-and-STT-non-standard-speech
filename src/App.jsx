@@ -12,27 +12,47 @@ const SmartPredictor = lazy(() => import("./components/solutions/SmartPredictor"
 const SymbolBoard = lazy(() => import("./components/solutions/SymbolBoard"));
 const EmergencyMode = lazy(() => import("./components/solutions/EmergencyMode"));
 
-// Error Boundary
+// Error Boundary with better error handling
 function ComponentErrorBoundary({ children, fallback }) {
   const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const handleError = (error) => {
-      console.error("Component error:", error);
+    const handleError = (errorEvent) => {
+      console.error("Component error caught by boundary:", errorEvent.error);
       setHasError(true);
+      setError(errorEvent.error);
     };
+
+    const handleRejection = (rejectionEvent) => {
+      console.error("Promise rejection caught by boundary:", rejectionEvent.reason);
+      setHasError(true);
+      setError(rejectionEvent.reason);
+    };
+
     window.addEventListener("error", handleError);
-    return () => window.removeEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleRejection);
+
+    return () => {
+      window.removeEventListener("error", handleError);
+      window.removeEventListener("unhandledrejection", handleRejection);
+    };
   }, []);
 
-  return hasError ? fallback : children;
+  if (hasError) {
+    return React.isValidElement(fallback) 
+      ? React.cloneElement(fallback, { error }) 
+      : fallback;
+  }
+
+  return children;
 }
 
 // Global Loading Spinner
 function LoadingSpinner() {
   return (
     <div className="loading-container">
-      <div className="loading-content">
+      <div className="loading-content animate-fadeIn">
         <div className="loading-spinner"></div>
         <p className="loading-text">Loading VoiceForge...</p>
       </div>
@@ -40,19 +60,36 @@ function LoadingSpinner() {
   );
 }
 
-// Error fallback
-function ErrorFallback({ componentName }) {
+// Error fallback with enhanced error details
+function ErrorFallback({ componentName, error }) {
   return (
     <div className="error-fallback">
-      <div className="error-container">
+      <div className="error-container animate-scaleIn">
         <div className="error-icon">⚠️</div>
         <h2 className="error-title">Component Load Error</h2>
         <p className="error-description">
-          Failed to load {componentName}. Please try refreshing the page.
+          Failed to load {componentName}. {error?.message || "Please try refreshing the page."}
         </p>
-        <button onClick={() => window.location.reload()} className="btn-primary">
-          Refresh Page
-        </button>
+        <div className="error-actions">
+          <button 
+            onClick={() => window.location.reload()} 
+            className="btn-primary animate-pulse"
+          >
+            Refresh Page
+          </button>
+          <button 
+            onClick={() => window.history.back()} 
+            className="btn-secondary"
+          >
+            Go Back
+          </button>
+        </div>
+        {process.env.NODE_ENV === 'development' && error && (
+          <details className="error-details">
+            <summary>Error Details (Development)</summary>
+            <pre>{error.stack}</pre>
+          </details>
+        )}
       </div>
     </div>
   );
@@ -61,36 +98,77 @@ function ErrorFallback({ componentName }) {
 function App() {
   const [activeSolution, setActiveSolution] = useState("daily");
   const [isLoading, setIsLoading] = useState(true);
-  const [systemStatus, setSystemStatus] = useState({ online: true, battery: 90 });
+  const [systemStatus, setSystemStatus] = useState({ 
+    online: true, 
+    battery: 90,
+    lastUpdate: new Date().toISOString()
+  });
   const [currentLanguage, setCurrentLanguage] = useState("en-KE");
 
-  // Simulate initial load
+  // Simulate initial load with better cleanup
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Listen for hash changes in URL
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (hash) setActiveSolution(hash);
+    let mounted = true;
+    
+    const loadApp = async () => {
+      // Simulate initial data loading
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      if (mounted) {
+        setIsLoading(false);
+      }
     };
 
-    handleHashChange(); // Load correct section on initial visit
-    window.addEventListener("hashchange", handleHashChange);
+    loadApp();
 
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Listen for hash changes in URL with debouncing
+  useEffect(() => {
+    let timeoutId;
+
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && solutionComponents[hash]) {
+        // Debounce to prevent rapid changes
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          setActiveSolution(hash);
+        }, 50);
+      }
+    };
+
+    // Initial hash check
+    handleHashChange();
+    
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("popstate", handleHashChange);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("popstate", handleHashChange);
+    };
   }, []);
 
   // Map solution keys to components
   const solutionComponents = {
     daily: { component: DailyCommunicator, name: "Daily Communicator" },
-    voice: { component: VoicePersonalizer, name: "Voice Personalizer" },
-    content: { component: ContentAmplifier, name: "Content Amplifier" },
+    personalizer: { component: VoicePersonalizer, name: "Voice Personalizer" },
+    amplifier: { component: ContentAmplifier, name: "Content Amplifier" },
     predictor: { component: SmartPredictor, name: "Smart Predictor" },
     symbols: { component: SymbolBoard, name: "Symbol Board" },
     emergency: { component: EmergencyMode, name: "Emergency Mode" },
+  };
+
+  const handleSolutionChange = (solution) => {
+    if (solutionComponents[solution]) {
+      setActiveSolution(solution);
+      // Update URL hash without causing page reload
+      window.history.pushState(null, "", `#${solution}`);
+    }
   };
 
   const renderSolution = () => {
@@ -98,39 +176,48 @@ function App() {
     const SolutionComponent = currentSolution.component;
 
     return (
-      <ComponentErrorBoundary fallback={<ErrorFallback componentName={currentSolution.name} />}>
+      <ComponentErrorBoundary 
+        fallback={<ErrorFallback componentName={currentSolution.name} />}
+      >
         <Suspense
           fallback={
-            <div className="component-loading">
+            <div className="component-loading animate-fadeIn">
               <div className="loading-spinner small"></div>
               <p className="loading-text">Loading {currentSolution.name}...</p>
             </div>
           }
         >
-          <SolutionComponent />
+          <div className="solution-container animate-slideUp">
+            <SolutionComponent />
+          </div>
         </Suspense>
       </ComponentErrorBoundary>
     );
   };
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="app-layout">
       <ParticleBackground />
 
+      {/* Fixed Header */}
       <Header
         activeSolution={activeSolution}
-        setActiveSolution={(solution) => {
-          setActiveSolution(solution);
-          window.location.hash = solution; // Update URL hash when user clicks a menu item
-        }}
+        setActiveSolution={handleSolutionChange}
         systemStatus={systemStatus}
         currentLanguage={currentLanguage}
         setCurrentLanguage={setCurrentLanguage}
       />
 
-      <main className="main-content">{renderSolution()}</main>
+      {/* Main Content with proper spacing for fixed header */}
+      <div className="main-content-wrapper">
+        <main className="main-content">
+          {renderSolution()}
+        </main>
+      </div>
 
       <Footer />
     </div>
