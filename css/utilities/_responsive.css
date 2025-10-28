@@ -1,4 +1,6 @@
-/* Responsive Design */
+/* Responsive Design - Enhanced for all device sizes */
+
+/* Large tablets and small laptops (1200px and below) */
 @media (max-width: 1200px) {
   /* Header Responsive */
   .secondary-nav {
@@ -69,6 +71,7 @@
   }
 }
 
+/* Medium tablets and small laptops (1024px and below) */
 @media (max-width: 1024px) {
   .footer-container {
     grid-template-columns: 1fr;
@@ -83,28 +86,49 @@
   .newsletter-section {
     grid-column: 1 / -1;
   }
+
+  /* Enhanced grid responsiveness */
+  .comms-grid, .amplifier-grid, .predictor-grid, .symbol-grid, .voice-grid {
+    grid-template-columns: 260px 1fr;
+    gap: 1.25rem;
+  }
+
+  .emergency-content {
+    grid-template-columns: 260px 1fr;
+    gap: 1.25rem;
+  }
 }
 
+/* Tablets and large mobile devices (768px and below) */
 @media (max-width: 768px) {
   /* Header Mobile */
   .primary-nav {
     flex-direction: column;
     gap: var(--space-md);
   }
-  
+
   .solution-navigation {
     order: 3;
     width: 100%;
     overflow-x: auto;
   }
-  
+
   .control-section {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .system-status {
     display: none;
+  }
+
+  /* Enhanced mobile layout */
+  .main-content {
+    padding: var(--space-sm);
+  }
+
+  .main-content-wrapper {
+    margin-top: var(--header-height);
   }
 
   /* Grid Mobile */
@@ -282,6 +306,7 @@
   }
 }
 
+/* Small mobile devices (480px and below) */
 @media (max-width: 480px) {
   .footer-main {
     padding: 1.5rem 1rem;
@@ -319,6 +344,26 @@
 
   .status-card {
     min-width: auto;
+  }
+
+  /* Enhanced small mobile layout */
+  .main-content {
+    padding: var(--space-xs);
+  }
+
+  .main-content-wrapper {
+    margin-top: var(--header-height);
+  }
+
+  /* Better button and input sizing for small screens */
+  .btn-primary, .btn-secondary {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .form-input, .form-select {
+    padding: 0.75rem;
+    font-size: 1rem;
   }
 }
 
@@ -366,6 +411,30 @@
   }
 }
 
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .nav-item, .action-btn, .dropdown-item {
+    min-height: 44px; /* iOS touch target minimum */
+    padding: 0.75rem 1rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    min-height: 44px;
+    padding: 0.875rem 1.5rem;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .glass-card {
+    border-width: 0.5px;
+  }
+
+  .professional-header {
+    box-shadow: 0 2px 4px -1px var(--shadow-color);
+  }
+}
+
 /* High Contrast Support */
 @media (prefers-contrast: high) {
   :root {
@@ -382,5 +451,49 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     /* Dark theme variables will be applied by default */
+  }
+}
+
+/* Additional responsive breakpoints for better coverage */
+
+/* Extra large screens (1440px and above) */
+@media (min-width: 1440px) {
+  .comms-grid, .amplifier-grid, .predictor-grid, .symbol-grid, .voice-grid {
+    max-width: 1600px;
+    grid-template-columns: 360px 1fr 360px;
+  }
+
+  .emergency-content {
+    max-width: 1600px;
+    grid-template-columns: 360px 1fr 360px;
+  }
+}
+
+/* Ultra-wide screens (1920px and above) */
+@media (min-width: 1920px) {
+  .comms-grid, .amplifier-grid, .predictor-grid, .symbol-grid, .voice-grid {
+    max-width: 2000px;
+    grid-template-columns: 400px 1fr 400px;
+  }
+
+  .emergency-content {
+    max-width: 2000px;
+    grid-template-columns: 400px 1fr 400px;
+  }
+}
+
+/* Small tablets (600px and below) - additional breakpoint */
+@media (max-width: 600px) {
+  .main-content {
+    padding: var(--space-xs);
+  }
+
+  .glass-card {
+    padding: var(--space-md);
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    padding: 0.875rem 1rem;
   }
 }
