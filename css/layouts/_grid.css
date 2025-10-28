@@ -10,7 +10,7 @@
 
 /* CRITICAL: Main content wrapper for fixed header */
 .main-content-wrapper {
-  margin-top: var(--header-height);
+  margin-top: 0;
   flex: 1;
   position: relative;
   z-index: var(--z-header) - 1;
@@ -108,7 +108,7 @@ body {
 .voice-personalizer-page,
 .emergency-mode-page {
   min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
-  padding-bottom: var(--space-xl);
+  padding: var(--content-padding) var(--content-padding) var(--space-xl) var(--content-padding);
   position: relative;
 }
 
@@ -186,7 +186,7 @@ body {
   }
   
   .main-content-wrapper {
-    margin-top: var(--header-height);
+    margin-top: 0;
   }
 }
 
