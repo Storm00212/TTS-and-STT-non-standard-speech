@@ -26,9 +26,8 @@
   /* REMOVED: padding-top: calc(var(--space-md) + 80px); - No longer needed with fixed header */
 }
 
-/* Body padding to prevent content hiding behind fixed header */
+/* Body styling for layout */
 body {
-  padding-top: var(--header-height);
   background: var(--bg-primary);
   color: var(--text-primary);
 }
