@@ -24,9 +24,9 @@
   --error-color: #f87171; /* Red 400 */
 }
 
-/* --- CRITICAL: Body padding to prevent content hiding behind fixed header --- */
+/* --- Body styling for layout --- */
 body {
-  padding-top: var(--header-height); /* Use variable for consistency */
+  /* Body padding removed to fix excessive spacing - header margin-top handles positioning */
 }
 
 /* --- 1. Main Header & FIXED Position - UPDATED --- */
@@ -521,9 +521,9 @@ body.has-tts-bar {
         gap: 0.5rem;
     }
     
-    /* Adjust body padding for mobile */
-    body {
-        padding-top: 60px;
+    /* Adjust header margin for mobile */
+    .main-content-wrapper {
+        margin-top: 60px;
     }
     
     :root {
