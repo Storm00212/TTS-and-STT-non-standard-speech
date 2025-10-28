@@ -22,7 +22,7 @@
     background-color: var(--color-background-dark);
     background-image: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     overflow-x: hidden;
-    padding-bottom: 40px;
+    padding: 0;
 }
 
 /* Scrollbar Styling for Sidebars */
